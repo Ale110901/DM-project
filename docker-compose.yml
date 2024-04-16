@@ -1,0 +1,13 @@
+services:
+
+  mongodb:
+    image: mongo
+    ports:
+    - 27020:27017
+    volumes:
+    - mongodata:/data/db
+
+volumes:
+  mongodata:
+    driver: local
+    
