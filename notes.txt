@@ -15,3 +15,30 @@ Column-based Databases:
     In this type of NoSQL database, the data is stored in column families. Similar types of data are grouped into cells and stored in columns of data instead of rows. A column can even contain multiple rows and columns inside it, which have their own unique id.
     Use Case:
         Column-family databases are best suited for data warehousing applications.
+
+CONFIGURATION NODE:
+mongo --host <hostname> --port <>
+rs.initiate(
+  {
+	_id: "<configReplSetName>",
+	configsvr: true,
+	members: [
+  	{ _id : 0, host : "<cfg1.example.net:27019>" },
+  	{ _id : 1, host : "<cfg2.example.net:27019>" },
+  	{ _id : 2, host : "<cfg3.example.net:27019>" }
+	]
+  }
+)
+
+SHARD NODE
+mongo --host <hostname> --port <>
+rs.initiate(
+  {
+	_id: "<shardReplicaSetName>",
+	members: [
+  	{ _id : 0, host : "<shard-host1.example.net:27018>" },
+  	{ _id : 1, host : "<shard-host2.example.net:27018>" },
+  	{ _id : 2, host : "<shard-host3.example.net:27018>" }
+	]
+  }
+)
