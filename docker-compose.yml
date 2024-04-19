@@ -1,9 +1,33 @@
 services:
 
-  mongodb:
+  replicaNode_1:
     image: mongo
+    command: mongod --shardsvr --replSet shard_rs --port 27018
+    ports:
+    - 27018:27017
+    volumes:
+    - mongodata:/data/db
+
+  replicaNode_2:
+    image: mongo
+    command: mongod --shardsvr --replSet shard_rs --port 27019
+    ports:
+    - 27019:27017
+    volumes:
+    - mongodata:/data/db
+  
+  configurationNode:
+    image: mongo
+    command: mongod --configsvr --replSet configuration_rs --port 27020
     ports:
     - 27020:27017
+    volumes:
+    - mongodata:/data/db
+
+  router:
+    image: mongo
+    ports:
+    - 27017:27017
     volumes:
     - mongodata:/data/db
 
