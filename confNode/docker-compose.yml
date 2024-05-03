@@ -1,0 +1,14 @@
+services:
+  
+  configurationNode:
+    container_name: configurationNode
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    ports: 
+      - 10003:27017
+    volumes:
+      - mongoshard:/sharding/nodeConf/data/db
+
+volumes:
+  mongoshard: {}
+    

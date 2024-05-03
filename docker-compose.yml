@@ -1,37 +1,36 @@
 services:
-
-  replicaNode_1:
-    image: mongo
-    command: mongod --shardsvr --replSet shard_rs --port 27018
-    ports:
-    - 27018:27017
-    volumes:
-    - mongodata:/data/db
-
-  replicaNode_2:
-    image: mongo
-    command: mongod --shardsvr --replSet shard_rs --port 27019
-    ports:
-    - 27019:27017
-    volumes:
-    - mongodata:/data/db
   
-  configurationNode:
+  confnode:
     image: mongo
-    command: mongod --configsvr --replSet configuration_rs --port 27020
-    ports:
-    - 27020:27017
+    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    ports: 
+      - 10003:27017
     volumes:
-    - mongodata:/data/db
+      - mongoshard:/data/db
 
-  router:
+  routernode:
     image: mongo
+    command: mongos --configdb cfgrs/configurationNode:27017 --port 27017
     ports:
-    - 27017:27017
+      - 10004:27017
+
+  ShardNode1:
+    image: mongo
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    ports: 
+      - 10001:27017
     volumes:
-    - mongodata:/data/db
+      - mongoshard1:/data/db
+
+  ShardNode2:
+    image: mongo
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    ports: 
+      - 10002:27017
+    volumes:
+      - mongoshard2:/data/db
 
 volumes:
-  mongodata:
-    driver: local
-    
+  mongoshard:
+  mongoshard1:
+  mongoshard2:

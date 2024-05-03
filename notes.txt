@@ -42,3 +42,40 @@ rs.initiate(
 	]
   }
 )
+
+DOCKER COMPOSE
+services:
+
+  ShardNode_1:
+    image: mongo
+    command: mongod --shardsvr --replSet shard_rs --port 27017
+    ports: 
+      - 27027:27017
+    volumes:
+      - mongoshard:/sharding/node1/data/db
+
+  ShardNode_2:
+    image: mongo
+    command: mongod --shardsvr --replSet shard_rs --port 27017
+    ports: 
+      - 27037:27017
+    volumes:
+      - mongoshard:/sharding/node2/data/db
+  
+  configurationNode:
+    image: mongo
+    command: mongod --configsvr --replSet configuration_rs --port 27017
+    ports: 
+      - 27047:27017
+    volumes:
+      - mongoshard:/sharding/nodeConf/data/db
+
+  routerNode:
+    image: mongo
+    command: mongos --configdb configuration_rs/configurationNode:27047 --port 27017
+    ports:
+      - 27057:27017
+
+volumes:
+  mongoshard:
+    driver: local

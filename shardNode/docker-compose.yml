@@ -1,0 +1,24 @@
+services:
+
+  ShardNode_1:
+    container_name: shardNode1
+    image: mongo
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    ports: 
+      - 10001:27017
+    volumes:
+      - mongoshard1:/sharding/node1/data/db
+
+  ShardNode_2:
+    container_name: shardNode2
+    image: mongo
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    ports: 
+      - 10002:27017
+    volumes:
+      - mongoshard2:/sharding/node2/data/db
+
+volumes:
+  mongoshard1: {}
+  mongoshard2: {}
+    
