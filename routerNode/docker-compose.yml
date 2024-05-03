@@ -1,8 +1,0 @@
-services:
-
-  routerNode:
-    container_name: routerNode
-    image: mongo
-    command: mongos --configdb cfgrs/0.0.0.0:10003 --port 27017
-    ports:
-      - 10004:27017
