@@ -16,8 +16,7 @@ services:
     ports:
       - 10004:27017
 
-  #PRIMARY
-  shardnode1:
+  shardnode1: 
     container_name: shardnode1
     image: mongo
     command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db
@@ -26,10 +25,11 @@ services:
     volumes:
       - mongoshard1:/data/db
 
+  #PRIMARY:
   shardnode2:
     container_name: shardnode2
     image: mongo
-    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db && ./sn1.js
+    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db
     ports: 
       - 10002:27017
     volumes:
