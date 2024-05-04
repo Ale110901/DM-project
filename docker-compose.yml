@@ -1,35 +1,40 @@
 services:
   
   confnode:
+    container_name: confnode
     image: mongo
-    command: mongod --configsvr --replSet cfgrs --port 27017 --dbpath /data/db
+    command: mongod --configsvr --replSet cfg --port 27017 --dbpath /data/db
     ports: 
       - 10003:27017
     volumes:
       - mongoshard:/data/db
 
   routernode:
+    container_name: routernode
     image: mongo
-    command: mongos --configdb cfgrs/configurationNode:27017 --port 27017
+    command: mongos --configdb cfg/confnode:27017 --port 27017 --bind_ip_all
     ports:
       - 10004:27017
 
-  ShardNode1:
+  #PRIMARY
+  shardnode1:
+    container_name: shardnode1
     image: mongo
-    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db
     ports: 
       - 10001:27017
     volumes:
       - mongoshard1:/data/db
 
-  ShardNode2:
+  shardnode2:
+    container_name: shardnode2
     image: mongo
-    command: mongod --shardsvr --replSet shard1rs --port 27017 --dbpath /data/db
+    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db && ./sn1.js
     ports: 
       - 10002:27017
     volumes:
       - mongoshard2:/data/db
-
+    
 volumes:
   mongoshard:
   mongoshard1:
