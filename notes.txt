@@ -20,25 +20,22 @@ CONFIGURATION NODE:
 mongo --host <hostname> --port <>
 rs.initiate(
   {
-	_id: "<configReplSetName>",
+	_id: "cfgrs",
 	configsvr: true,
 	members: [
-  	{ _id : 0, host : "<cfg1.example.net:27019>" },
-  	{ _id : 1, host : "<cfg2.example.net:27019>" },
-  	{ _id : 2, host : "<cfg3.example.net:27019>" }
+  	{ _id : 0, host : "bdm-project-confnode-1:27017" }
 	]
   }
 )
 
 SHARD NODE
 mongo --host <hostname> --port <>
-rs.initiate(
+rs.reconfig(
   {
-	_id: "<shardReplicaSetName>",
+	_id: "shard1rs",
 	members: [
-  	{ _id : 0, host : "<shard-host1.example.net:27018>" },
-  	{ _id : 1, host : "<shard-host2.example.net:27018>" },
-  	{ _id : 2, host : "<shard-host3.example.net:27018>" }
+  	{ _id : 0, host : "shardnode2:27017" },
+  	{ _id : 1, host : "shardnode1:27017" }
 	]
   }
 )
