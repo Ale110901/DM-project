@@ -20,19 +20,19 @@ CONFIGURATION NODE:
 mongo --host <hostname> --port <>
 rs.initiate(
   {
-	_id: "cfgrs",
+	_id: "cfg",
 	configsvr: true,
 	members: [
-  	{ _id : 0, host : "bdm-project-confnode-1:27017" }
+  	{ _id : 0, host : "confnode:27017" }
 	]
   }
 )
 
 SHARD NODE
 mongo --host <hostname> --port <>
-rs.reconfig(
+rs.initiate(
   {
-	_id: "shard1rs",
+	_id: "shardrs",
 	members: [
   	{ _id : 0, host : "shardnode2:27017" },
   	{ _id : 1, host : "shardnode1:27017" }
@@ -40,39 +40,29 @@ rs.reconfig(
   }
 )
 
-DOCKER COMPOSE
-services:
+sh.addShard("shardrs/shardnode2:27017")
+sh.addShard("shardrs/shardnode1:27017")
 
-  ShardNode_1:
-    image: mongo
-    command: mongod --shardsvr --replSet shard_rs --port 27017
-    ports: 
-      - 27027:27017
-    volumes:
-      - mongoshard:/sharding/node1/data/db
 
-  ShardNode_2:
-    image: mongo
-    command: mongod --shardsvr --replSet shard_rs --port 27017
-    ports: 
-      - 27037:27017
-    volumes:
-      - mongoshard:/sharding/node2/data/db
-  
-  configurationNode:
-    image: mongo
-    command: mongod --configsvr --replSet configuration_rs --port 27017
-    ports: 
-      - 27047:27017
-    volumes:
-      - mongoshard:/sharding/nodeConf/data/db
-
-  routerNode:
-    image: mongo
-    command: mongos --configdb configuration_rs/configurationNode:27047 --port 27017
-    ports:
-      - 27057:27017
-
-volumes:
-  mongoshard:
-    driver: local
+db.createView( "try", "data", [
+   {
+      $lookup:
+         {
+            from: "carbon_intensity",
+            localField: "country",
+            foreignField: "Entity",
+            as: "year_country"
+         }
+   },
+   {
+      $project:
+         {
+           _id: 0,
+           country: 1,
+           Carbon_intensity_of_electricity_gCO2kWh: 1,
+           year: 1,
+           year: "$year_country.year"
+         }
+   },
+      { $unwind: "$year" }
+] )
