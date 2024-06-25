@@ -14,19 +14,19 @@ def task(t_id):
     collection = database[collection_name]
 
     trial = collection.find().limit(10)#.explain()
-    #print(json.dumps(trial, indent=4, default=json_util.default))
+    print(json.dumps(trial, indent=4, default=json_util.default))
 
-    #for documents in trial:
-        #print(json.dumps(documents, indent=4, default=json_util.default))
+    for documents in trial:
+        print(json.dumps(documents, indent=4, default=json_util.default))
     
-    client.close()
+    client.close() 
     return f'{t_id} OK'
 
 
 if __name__ == '__main__':
 
-    with ThreadPoolExecutor(10) as exe:
-        futures = [exe.submit(task, i) for i in range(10)]
+    with ThreadPoolExecutor(20) as exe:
+        futures = [exe.submit(task, i) for i in range(20)]
         
         for future in as_completed(futures):
             result = future.result()
