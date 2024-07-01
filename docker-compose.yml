@@ -5,7 +5,7 @@ services:
     image: mongo
     command: mongod --configsvr --replSet cfg --port 27017 --dbpath /data/db
     ports: 
-      - 10003:27017
+      - 10005:27017
     volumes:
       - mongoshard:/data/db
 
@@ -14,28 +14,48 @@ services:
     image: mongo
     command: mongos --configdb cfg/confnode:27017 --port 27017 --bind_ip_all
     ports:
-      - 10004:27017
+      - 10006:27017
 
-  shardnode1: 
-    container_name: shardnode1
+  shard_1_node_1: #PRIMARY
+    container_name: shard_1_node_1
     image: mongo
-    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db
+    command: mongod --shardsvr --replSet shard1 --port 27017 --dbpath /data/db
     ports: 
       - 10001:27017
     volumes:
-      - mongoshard1:/data/db
+      - mongoshard1_1:/data/db
 
-  #PRIMARY:
-  shardnode2:
-    container_name: shardnode2
+  shard_1_node_2: 
+    container_name: shard_1_node_2
     image: mongo
-    command: mongod --shardsvr --replSet shardrs --port 27017 --dbpath /data/db
+    command: mongod --shardsvr --replSet shard1 --port 27017 --dbpath /data/db
     ports: 
       - 10002:27017
     volumes:
-      - mongoshard2:/data/db
+      - mongoshard1_2:/data/db
+
+  shard_2_node_1: #PRIMARY
+    container_name: shard_2_node_1
+    image: mongo
+    command: mongod --shardsvr --replSet shard2 --port 27017 --dbpath /data/db
+    ports: 
+      - 10003:27017
+    volumes:
+      - mongoshard2_1:/data/db
+
+  shard_2_node_2:
+    container_name: shard_2_node_2
+    image: mongo
+    command: mongod --shardsvr --replSet shard2 --port 27017 --dbpath /data/db
+    ports: 
+      - 10004:27017
+    volumes:
+      - mongoshard2_2:/data/db
     
 volumes:
   mongoshard:
-  mongoshard1:
-  mongoshard2:
+  mongoshard1_1:
+  mongoshard1_2:
+  mongoshard2_1:
+  mongoshard2_2:
+
