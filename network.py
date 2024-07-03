@@ -7,14 +7,18 @@ import matplotlib.pyplot as plt
 query_one_shard = {
         "$and": [
             {"Year": {"$gt": 2007}},
-            {"Area": "Norway"}
+            {"Area": "Norway"},
+            {"Value": {"$gt": 0.01}},
+            {"Unit": "TWh"}
         ]
     }
 
 query_both_shard = {
         "$and": [
             {"Year": {"$lt": 2016}},
-            {"Area": "Lao People's Democratic Republic (the)"}
+            {"Area": "Lao People's Democratic Republic (the)"},
+            {"Value": {"$gt": 0.01}},
+            {"Unit": "TWh"}
         ]
     }
 
@@ -69,9 +73,33 @@ def measure_time(query, num_threads):
     else:
         print("[+] Connection error.")
         return float('inf')
+    
+def get_result():
+    client, db_name, collection_name = connect()
+
+    if not control(client):
+        print("Connection error during count retrieval.")
+        client.close()
+        return None
+
+    database = client[db_name]
+    collection = database[collection_name]
+
+    try:
+        count = collection.count_documents(query_one_shard)
+        #count = collection.find(query_both_shard).explain()
+        print(f"Numero di documenti trovati: {count}")
+        client.close()
+    except Exception as e:
+        print(f"Errore durante il conteggio dei documenti: {e}")
+        return None
+    finally:
+        return
 
 def main():
-    num_threads_list = [500, 1000, 2000, 3000, 4000]
+    '''documents = get_result()
+    print(documents)'''
+    num_threads_list = [500, 1000, 1500, 2000, 2500]
     num_trials = 2
 
     times_one_shard = []
